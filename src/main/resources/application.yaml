@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: gastro-link-api
+  datasource:
+    url: "jdbc:mysql://localhost:3306/gastro_link"
+    username: myuser
+    password: secret
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: validate
+        format_sql: true

@@ -1,5 +1,5 @@
 CREATE TABLE tb_endereco (
-     id             BIGINT          PRIMARY KEY,
+     id             BIGINT          NOT NULL    AUTO_INCREMENT PRIMARY KEY,
      logradouro     VARCHAR(255)    NOT NULL,
      numero         VARCHAR(20)     NOT NULL,
      complemento    VARCHAR(100),

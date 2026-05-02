@@ -1,8 +1,10 @@
 package com.fiap.gastrolinkapi.controller.exception;
 
 import com.fiap.gastrolinkapi.exception.JaCadastradoException;
+import com.fiap.gastrolinkapi.exception.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,5 +47,28 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("errors", errors);
 
         return problemDetail;
+    }
+
+    @ExceptionHandler(UsuarioNaoEncontradoException.class)
+    public ProblemDetail handleUsuarioNaoEncontradoException(UsuarioNaoEncontradoException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
+        problemDetail.setTitle("Usuário Não Encontrado");
+        problemDetail.setType(URI.create("https://api.seusistema.com/erros/usuario-nao-encontrado"));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ProblemDetail> handleException(Exception ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
+        );
+        problemDetail.setTitle("Erro Interno do Servidor");
+        problemDetail.setType(URI.create("https://api.seusistema.com/erros/erro-interno"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetail);
+
     }
 }

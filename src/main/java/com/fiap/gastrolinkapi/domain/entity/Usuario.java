@@ -1,5 +1,6 @@
 package com.fiap.gastrolinkapi.domain.entity;
 
+import com.fiap.gastrolinkapi.dto.request.AtualizaSenhaRequest;
 import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.domain.enums.TipoUsuario;
@@ -88,6 +89,11 @@ public class Usuario {
         if (dados.endereco() != null) {
             this.endereco.atualizarInformacoes(dados.endereco());
         }
+        this.dataUltimaAlteracao = LocalDateTime.now();
+    }
+
+    public void atualizarSenha(@Valid AtualizaSenhaRequest dto) {
+        this.senha = dto.senha();
         this.dataUltimaAlteracao = LocalDateTime.now();
     }
 }

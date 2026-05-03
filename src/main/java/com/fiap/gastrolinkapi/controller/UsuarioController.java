@@ -1,6 +1,7 @@
 package com.fiap.gastrolinkapi.controller;
 
 import com.fiap.gastrolinkapi.domain.service.UsuarioService;
+import com.fiap.gastrolinkapi.dto.request.AtualizaSenhaRequest;
 import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.dto.response.UsuarioResponse;
@@ -132,6 +133,12 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
         this.usuarioService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> atualizarSenha(@PathVariable Long id, @RequestBody @Valid AtualizaSenhaRequest dto) {
+        usuarioService.atualizarSenha(id, dto);
         return ResponseEntity.noContent().build();
     }
 }

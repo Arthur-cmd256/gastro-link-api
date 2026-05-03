@@ -2,6 +2,7 @@ package com.fiap.gastrolinkapi.domain.service;
 
 import com.fiap.gastrolinkapi.domain.entity.Usuario;
 import com.fiap.gastrolinkapi.domain.repository.UsuarioRepository;
+import com.fiap.gastrolinkapi.dto.request.AtualizaSenhaRequest;
 import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.dto.response.UsuarioResponse;
@@ -59,5 +60,11 @@ public class UsuarioService {
 
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    public void atualizarSenha(Long id, @Valid AtualizaSenhaRequest dto) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario nao encontrado"));
+        usuario.atualizarSenha(dto);
+        repository.save(usuario);
     }
 }

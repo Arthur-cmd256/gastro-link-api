@@ -2,11 +2,13 @@ package com.fiap.gastrolinkapi.domain.service;
 
 import com.fiap.gastrolinkapi.domain.entity.Usuario;
 import com.fiap.gastrolinkapi.domain.repository.UsuarioRepository;
+import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.dto.response.UsuarioResponse;
 import com.fiap.gastrolinkapi.exception.EmailJaCadastradoException;
 import com.fiap.gastrolinkapi.exception.LoginJaCadastradoException;
 import com.fiap.gastrolinkapi.exception.UsuarioNaoEncontradoException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,5 +47,13 @@ public class UsuarioService {
         if (repository.existsByLogin(login)) {
             throw new LoginJaCadastradoException();
         }
+    }
+
+    public UsuarioResponse atualizar(Long id, @Valid AtualizaUsuarioRequest dto) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario nao encontrado"));
+        validarDuplicidade(dto.email(), dto.login());
+        usuario.atualizarInformacoes(dto);
+        repository.save(usuario);
+        return new UsuarioResponse(usuario);
     }
 }

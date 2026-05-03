@@ -1,8 +1,10 @@
 package com.fiap.gastrolinkapi.domain.entity;
 
+import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.domain.enums.TipoUsuario;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 
@@ -68,5 +70,24 @@ public class Usuario {
 
     public Endereco getEndereco() {
         return endereco;
+    }
+
+    public void atualizarInformacoes(@Valid AtualizaUsuarioRequest dados){
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.email() != null) {
+            this.email = dados.email();
+        }
+        if (dados.login() != null) {
+            this.login = dados.login();
+        }
+        if (dados.tipoUsuario() != null) {
+            this.tipoUsuario = dados.tipoUsuario();
+        }
+        if (dados.endereco() != null) {
+            this.endereco.atualizarInformacoes(dados.endereco());
+        }
+        this.dataUltimaAlteracao = LocalDateTime.now();
     }
 }

@@ -1,6 +1,7 @@
 package com.fiap.gastrolinkapi.controller;
 
 import com.fiap.gastrolinkapi.domain.service.UsuarioService;
+import com.fiap.gastrolinkapi.dto.request.AtualizaUsuarioRequest;
 import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.dto.response.UsuarioResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -82,7 +83,7 @@ public class UsuarioController {
         return ResponseEntity.created(uri).body(usuarioResponse);
     }
 
-    @GetMapping
+    @GetMapping("/buscar")
     @Operation(summary = "Listar ou buscar usuários", description = "Lista todos os usuários ou busca por nome com paginação.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso",
@@ -120,5 +121,11 @@ public class UsuarioController {
             @Parameter(description = "Nome do usuário para busca (case-insensitive, opcional)", example = "João")
             @RequestParam(required = false) String nome) {
         return ResponseEntity.ok(this.usuarioService.buscar(pageable, nome));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid AtualizaUsuarioRequest dto) {
+        UsuarioResponse usuarioResponse = this.usuarioService.atualizar(id, dto);
+        return ResponseEntity.ok(usuarioResponse);
     }
 }

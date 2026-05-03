@@ -2,6 +2,8 @@ package com.fiap.gastrolinkapi.domain.entity;
 
 import com.fiap.gastrolinkapi.dto.request.EnderecoCadastroRequest;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tb_endereco")
@@ -65,5 +67,15 @@ public class Endereco {
 
     public String getCep() {
         return cep;
+    }
+
+    public void atualizarInformacoes(@NotNull(message = "Endereço é obrigatório") @Valid EnderecoCadastroRequest endereco) {
+        this.logradouro = endereco.logradouro();
+        this.numero = endereco.numero();
+        this.complemento = endereco.complemento();
+        this.bairro = endereco.bairro();
+        this.cidade = endereco.cidade();
+        this.uf = endereco.uf();
+        this.cep = endereco.cep();
     }
 }

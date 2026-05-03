@@ -11,19 +11,18 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/v1/usuarios")
 @Tag(name = "Usuários", description = "Endpoints para gestão de usuários (Clientes e Donos de Restaurantes)")
 public class UsuarioController {
     private final UsuarioService usuarioService;
@@ -85,7 +84,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/buscar")
-    @Operation(summary = "Listar ou buscar usuários", description = "Lista todos os usuários ou busca por nome com paginação.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Listar ou buscar usuários", description = "Lista todos os usuários ou busca por nome com paginação. **Requer autenticação com token JWT.**")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso",
                     content = @Content(mediaType = "application/json",
@@ -115,28 +115,82 @@ public class UsuarioController {
                   "number": 0,
                   "size": 10,
                   "empty": false
-                }""")))
+                }"""))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado - token JWT ausente ou inválido")
     })
     public ResponseEntity<Page<UsuarioResponse>> buscarUsuarios(
-            @ParameterObject @PageableDefault(size = 10, sort = "nome") Pageable pageable,
+            @Parameter(hidden = true) Pageable pageable,
             @Parameter(description = "Nome do usuário para busca (case-insensitive, opcional)", example = "João")
             @RequestParam(required = false) String nome) {
         return ResponseEntity.ok(this.usuarioService.buscar(pageable, nome));
     }
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Atualizar usuário", description = "Atualiza os dados de um usuário específico. **Requer autenticação com token JWT.**")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = """
+                                    {
+                                      "id": 1,
+                                      "nome": "João Silva Atualizado",
+                                      "email": "joao@example.com",
+                                      "login": "joao_silva",
+                                      "tipoUsuario": "CLIENTE",
+                                      "dataUltimaAlteracao": "2023-10-02T10:00:00",
+                                      "endereco": {
+                                        "logradouro": "Rua das Flores",
+                                        "numero": "123",
+                                        "complemento": null,
+                                        "bairro": "Centro",
+                                        "cidade": "São Paulo",
+                                        "uf": "SP",
+                                        "cep": "01234-567"
+                                      }
+                                    }"""))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado - token JWT ausente ou inválido"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     public ResponseEntity<UsuarioResponse> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid AtualizaUsuarioRequest dto) {
         UsuarioResponse usuarioResponse = this.usuarioService.atualizar(id, dto);
         return ResponseEntity.ok(usuarioResponse);
     }
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Deletar usuário", description = "Remove um usuário específico do sistema. **Requer autenticação com token JWT.**")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Não autenticado - token JWT ausente ou inválido"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
         this.usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/senha/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Atualizar senha do usuário", description = "Atualiza a senha de um usuário específico. **Requer autenticação com token JWT.**")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Senha atualizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Validação falhou - senhas inválidas",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = """
+                                    {
+                                      "type": "about:blank",
+                                      "title": "Erro de Validação",
+                                      "status": 400,
+                                      "detail": "Um ou mais campos estão inválidos ou ausentes.",
+                                      "errors": [
+                                        {"campo": "senhaAnterior", "mensagem": "Senha anterior é obrigatória"},
+                                        {"campo": "novaSenha", "mensagem": "Nova senha é obrigatória"}
+                                      ]
+                                    }"""))),
+            @ApiResponse(responseCode = "401", description = "Não autenticado - token JWT ausente ou inválido"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     public ResponseEntity<Void> atualizarSenha(@PathVariable Long id, @RequestBody @Valid AtualizaSenhaRequest dto) {
         usuarioService.atualizarSenha(id, dto);
         return ResponseEntity.noContent().build();

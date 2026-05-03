@@ -12,6 +12,7 @@ import com.fiap.gastrolinkapi.exception.UsuarioNaoEncontradoException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +22,16 @@ import java.time.LocalDateTime;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     public UsuarioService(UsuarioRepository repository) {
         this.repository = repository;
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @Transactional
     public UsuarioResponse cadastrar(UsuarioCadastroRequest dto){
         validarDuplicidade(dto.email(), dto.login());
-        Usuario usuario = new Usuario(dto, LocalDateTime.now());
+        Usuario usuario = new Usuario(dto, LocalDateTime.now(), bCryptPasswordEncoder);
         repository.save(usuario);
         return new UsuarioResponse(usuario);
     }
@@ -64,7 +67,7 @@ public class UsuarioService {
 
     public void atualizarSenha(Long id, @Valid AtualizaSenhaRequest dto) {
         Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario nao encontrado"));
-        usuario.atualizarSenha(dto);
+        usuario.atualizarSenha(dto, bCryptPasswordEncoder);
         repository.save(usuario);
     }
 }

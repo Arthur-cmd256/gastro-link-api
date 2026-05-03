@@ -1,5 +1,6 @@
 package com.fiap.gastrolinkapi.controller.exception;
 
+import com.fiap.gastrolinkapi.exception.CredenciasInvalidasException;
 import com.fiap.gastrolinkapi.exception.JaCadastradoException;
 import com.fiap.gastrolinkapi.exception.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
@@ -70,5 +71,16 @@ public class GlobalExceptionHandler {
         problemDetail.setType(URI.create("https://api.seusistema.com/erros/erro-interno"));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetail);
 
+    }
+
+    @ExceptionHandler(CredenciasInvalidasException.class)
+    public ResponseEntity<ProblemDetail> handleCredenciasInvalidasException(CredenciasInvalidasException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage()
+        );
+        problemDetail.setTitle("Autenticação Falhou");
+        problemDetail.setType(URI.create("https://api.seusistema.com/erros/credenciais-invalidas"));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problemDetail);
     }
 }

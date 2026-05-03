@@ -6,6 +6,7 @@ import com.fiap.gastrolinkapi.dto.request.UsuarioCadastroRequest;
 import com.fiap.gastrolinkapi.domain.enums.TipoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -35,11 +36,11 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(UsuarioCadastroRequest dados, LocalDateTime dataUltimaAlteracao) {
+    public Usuario(UsuarioCadastroRequest dados, LocalDateTime dataUltimaAlteracao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.nome = dados.nome();
         this.email = dados.email();
         this.login = dados.login();
-        this.senha = dados.senha();
+        this.senha = bCryptPasswordEncoder.encode(dados.senha());
         this.tipoUsuario = dados.tipoUsuario();
         this.dataUltimaAlteracao = dataUltimaAlteracao;
         this.endereco = new Endereco(dados.endereco());
@@ -59,6 +60,10 @@ public class Usuario {
 
     public String getLogin() {
         return login;
+    }
+
+    public String getSenha() {
+        return senha;
     }
 
     public TipoUsuario getTipoUsuario() {
@@ -92,8 +97,8 @@ public class Usuario {
         this.dataUltimaAlteracao = LocalDateTime.now();
     }
 
-    public void atualizarSenha(@Valid AtualizaSenhaRequest dto) {
-        this.senha = dto.senha();
+    public void atualizarSenha(@Valid AtualizaSenhaRequest dto, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.senha = bCryptPasswordEncoder.encode(dto.senha());
         this.dataUltimaAlteracao = LocalDateTime.now();
     }
 }

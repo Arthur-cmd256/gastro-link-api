@@ -128,4 +128,10 @@ public class UsuarioController {
         UsuarioResponse usuarioResponse = this.usuarioService.atualizar(id, dto);
         return ResponseEntity.ok(usuarioResponse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
+        this.usuarioService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

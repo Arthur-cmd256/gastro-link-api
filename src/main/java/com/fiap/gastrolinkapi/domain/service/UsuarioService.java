@@ -56,4 +56,8 @@ public class UsuarioService {
         repository.save(usuario);
         return new UsuarioResponse(usuario);
     }
+
+    public void deletar(Long id) {
+        repository.deleteById(id);
+    }
 }

@@ -14,7 +14,7 @@ public record UsuarioCadastroRequest(
         String nome,
         @Schema(description = "Endereço de e-mail do usuário, deve ser único", example = "joao@example.com")
         @NotBlank(message = "Email é obrigatório")
-        @Email
+        @Email(message = "Email deve ser válido")
         String email,
         @Schema(description = "Nome de usuário para login", example = "joao_silva")
         @NotBlank(message = "Login é obrigatório")

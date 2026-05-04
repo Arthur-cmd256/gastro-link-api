@@ -31,7 +31,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-gastro_link
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-gastro_link}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-myuser}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-secret}
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate

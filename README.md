@@ -28,9 +28,11 @@ Sistema de gestão de restaurantes desenvolvido em Spring Boot, permitindo que c
 git clone <seu-repositorio>
 cd gastro-link-api
 
-# Defina variáveis de ambiente (opcional)
-export JWT_SECRET=your-secret-key
-export JWT_EXPIRATION=86400000
+# Copie o arquivo de exemplo de variáveis de ambiente
+cp .env.example .env
+
+# (Opcional) Edite o .env com suas configurações
+# nano .env
 
 # Execute o Docker Compose
 docker-compose up -d
@@ -38,6 +40,36 @@ docker-compose up -d
 # Acesse a aplicação
 # API: http://localhost:8080
 # Swagger: http://localhost:8080/swagger-ui/index.html
+```
+
+### ⚙️ Configuração de Variáveis de Ambiente
+
+O projeto utiliza um arquivo `.env` para configurar variáveis de ambiente. Um arquivo `.env.example` é fornecido como template.
+
+**Para usar:**
+```bash
+# 1. Copiar o template
+cp .env.example .env
+
+# 2. Editar conforme necessário
+# Variáveis disponíveis:
+#   - MYSQL_ROOT_PASSWORD: Senha root do MySQL (padrão: root)
+#   - MYSQL_DATABASE: Nome do banco de dados (padrão: gastro_link)
+#   - MYSQL_USER: Usuário do MySQL (padrão: myuser)
+#   - MYSQL_PASSWORD: Senha do usuário MySQL (padrão: secret)
+#   - JWT_SECRET: Chave para assinar tokens JWT (MUDAR EM PRODUÇÃO!)
+#   - JWT_EXPIRATION: Tempo de expiração do token em ms (padrão: 86400000 = 24h)
+#   - SPRING_PROFILE_ACTIVE: Perfil do Spring (dev, test, prod)
+
+# 3. O arquivo .env é ignorado pelo Git, por segurança
+```
+
+**Importante: Segurança em Produção**
+```bash
+# Gerar uma chave secreta segura para JWT
+openssl rand -base64 32
+
+# Então atualizar a variável JWT_SECRET no .env
 ```
 
 ### Opção 2: Execução Local

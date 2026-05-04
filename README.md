@@ -35,7 +35,7 @@ cp .env.example .env
 # nano .env
 
 # Execute o Docker Compose
-docker-compose up -d
+docker compose up -d
 
 # Acesse a aplicação
 # API: http://localhost:8080
@@ -258,20 +258,20 @@ src/main/java/com/fiap/gastrolinkapi/
 
 ### Porta 3306 já em uso
 ```bash
-docker-compose down
+docker compose down
 # Ou mude a porta em compose.yaml
 ```
 
 ### Erro de conexão com banco
 ```bash
 # Aguarde o MySQL iniciar
-docker-compose logs mysql
+docker compose logs mysql
 ```
 
 ### Limpar dados e reiniciar
 ```bash
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 ```
 
 ## 📝 Licença

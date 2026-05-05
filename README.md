@@ -280,7 +280,7 @@ MIT
 
 ## 👤 Autor
 
-Desenvolvido como Tech Challenge da Fase 1 - FIAP
+Desenvolvido por Arthur Nascimento - rm370651
 
 ---
 
